@@ -1,10 +1,8 @@
+// src/providers/ProtectedRoute.tsx
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/model/authStore';
-
-// 1. Definimos el tipo de las props correctamente
-interface ProtectedRouteProps {
-  allowedRoles?: string[]; // <-- Corregido a string[] (un array de strings)
-}
+import type { RoleDto } from '@/features/auth/interface/RoleDto'; // Importar RoleDto
+import type { ProtectedRouteProps } from '@/features/auth/interface/Auxiliar';
 
 export const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -14,21 +12,30 @@ export const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
     return <Navigate to="/login" replace />;
   }
 
-  // 2. Corregimos la sintaxis. Si no hay roles, usamos un array vacío []
-  const userRoles = user?.roles || [];
+  // Obtenemos los roles del usuario. Si no hay, es un array vacío.
+  // user.roles es RoleDto[] | undefined
+  const userRoles: RoleDto[] = user?.roles || [];
 
-  // 3. Comprobamos si se pasaron roles permitidos
+  // Comprobamos si se especificaron roles permitidos para esta ruta.
   const isAuthorized = allowedRoles
-    ? // Si SÍ se pasaron, comprobamos si el usuario tiene AL MENOS UNO de ellos
-      allowedRoles.some((role) => userRoles.includes(role))
-    : // Si NO se pasaron (allowedRoles es undefined), solo se requiere estar autenticado
+    ? // Si SÍ se pasaron roles permitidos:
+      // Verificamos si AL MENOS UNO de los roles permitidos (allowedRoles - strings)
+      // coincide con el nombreRol de AL MENOS UNO de los roles que tiene el usuario (userRoles - objetos).
+      allowedRoles.some(
+        (
+          allowedRoleName, // Para cada nombre de rol permitido...
+        ) =>
+          userRoles.some((userRole) => userRole.nombreRol === allowedRoleName), // ...verificamos si el usuario tiene un rol con ese nombre.
+      )
+    : // Si NO se pasaron allowedRoles, significa que solo se requiere estar autenticado.
       true;
 
   if (!isAuthorized) {
-    // Si está autenticado pero no autorizado, redirigir
+    // Si está autenticado pero su rol no está en allowedRoles, redirigir a "no autorizado".
     return <Navigate to="/unauthorized" replace />;
   }
 
-  // Si está autenticado y autorizado, renderizar la ruta hija
+  // Si está autenticado Y autorizado (ya sea porque no se requerían roles específicos o porque tiene uno de los permitidos),
+  // renderiza el contenido de la ruta anidada.
   return <Outlet />;
 };

@@ -1,83 +1,115 @@
-import React from 'react';
+import React from 'react'; // Necesario para React.FC
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@/shared/ui/button'; // Ruta corregida
-import { Input } from '@/shared/ui/input'; // Ruta corregida
-import { Label } from '@/shared/ui/label'; // Ruta corregida
+// Ajusta las rutas según tu estructura final y donde pusiste los componentes UI
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Label } from '@/shared/ui/label';
 
-// Imports para la lógica de API
-import apiClient from '@/shared/api/axiosInstance';
-import { useAuthStore } from '@/features/auth/model/authStore';
-
-// 1. Definir el esquema de validación con Zod (Sintaxis moderna)
+// Esquema de validación Zod (sin cambios)
 const loginSchema = z.object({
   email: z.email('Correo electrónico inválido'),
   password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
 });
 
-// 2. Inferir el tipo del formulario desde el esquema de Zod
+// Inferir el tipo de los valores del formulario
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export const LoginForm = () => {
-  // 3. Configurar el hook useForm con el resolver de Zod
+// *** INTERFAZ PARA LAS PROPS ***
+// Definimos qué props espera este componente desde LoginPage
+interface LoginFormProps {
+  onLoginSubmit: (credentials: LoginFormValues) => Promise<void>;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  onSuccess: () => void;
+  isLoading: boolean;
+}
+
+// *** COMPONENTE ACTUALIZADO ***
+// Acepta las props definidas en LoginFormProps
+export const LoginForm: React.FC<LoginFormProps> = ({
+  onLoginSubmit,
+  setLoading,
+  setError,
+  onSuccess,
+  isLoading,
+}) => {
+  // Configuración de react-hook-form
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
-  // Hooks para el estado y el error de API
-  const storeLogin = useAuthStore((state) => state.login);
-  const [apiError, setApiError] = React.useState<string | null>(null);
-
-  // 4. Definir la función de envío (¡AHORA HACE LA LLAMADA A LA API!)
+  // *** FUNCIÓN onSubmit ACTUALIZADA ***
   const onSubmit = async (data: LoginFormValues) => {
-    setApiError(null); // Limpiar error anterior
+    setError(null);
+    setLoading(true);
     try {
-      // 1. Llamar a la API aquí
-      const response = await apiClient.post('/auth/login', data);
-
-      // 2. Pasar los datos (usuario y tokens) al store para guardarlos
-      storeLogin(response.data);
-
-      // 3. Opcional: Redirigir al usuario
-      // window.location.href = '/dashboard';
-      console.log('¡Inicio de sesión exitoso!', response.data);
-    } catch (error) {
-      console.error('Error de inicio de sesión:', error);
-      // 4. Mostrar un error genérico al usuario
-      setApiError('Email o contraseña incorrectos. Intente de nuevo.');
+      // Llama a la función que vino de LoginPage
+      await onLoginSubmit(data);
+      // Si tuvo éxito, llama al callback de éxito
+      onSuccess();
+    } catch (error: any) {
+      // Si hubo error, llama al callback de error
+      console.error('Login failed in LoginForm:', error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        (error?.message?.includes('401') ? 'Credenciales inválidas.' : null) ||
+        (error?.message?.includes('Network Error') ||
+        error?.message?.includes('Failed to fetch')
+          ? 'No se pudo conectar al servidor.'
+          : null) ||
+        error?.message ||
+        'Ocurrió un error inesperado.';
+      setError(errorMessage);
+      setLoading(false); // Importante: Parar la carga en caso de error
     }
   };
 
+  // --- Renderizado del formulario ---
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {/* Mostrar error de API si existe */}
-      {apiError && (
-        <div className="text-red-600 text-sm font-medium p-3 bg-red-100 border border-red-300 rounded-md">
-          {apiError}
-        </div>
-      )}
-
+      {/* Campo Email */}
       <div>
         <Label htmlFor="email">Correo Electrónico</Label>
-        <Input id="email" type="email" {...register('email')} />
+        <Input
+          id="email"
+          type="email"
+          {...register('email')}
+          aria-invalid={errors.email ? 'true' : 'false'}
+          disabled={isLoading}
+        />
         {errors.email && (
-          <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
         )}
       </div>
+
+      {/* Campo Contraseña */}
       <div>
         <Label htmlFor="password">Contraseña</Label>
-        <Input id="password" type="password" {...register('password')} />
+        <Input
+          id="password"
+          type="password"
+          {...register('password')}
+          aria-invalid={errors.password ? 'true' : 'false'}
+          disabled={isLoading}
+        />
         {errors.password && (
-          <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
         )}
       </div>
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+
+      {/* Botón de Envío */}
+      <Button type="submit" disabled={isLoading} className="w-full">
+        {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
       </Button>
     </form>
   );
