@@ -1,0 +1,47 @@
+import { Link } from 'react-router-dom';
+import { Button } from '@/shared/ui/button';
+import { BookMarked, LayoutDashboard } from 'lucide-react';
+import { useAuthStore } from '@/services/auth/authStore';
+
+/**
+ * Navbar para las páginas públicas (Home, Login, etc.)
+ * Muestra "Login" o "Ir al Panel" según el estado de autenticación.
+ */
+export function Navbar() {
+  // 1. Leer el estado de autenticación de Zustand
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 max-w-screen-2xl items-center">
+        <Link to="/" className="mr-6 flex items-center space-x-2">
+          <BookMarked className="h-6 w-6 text-primary" />
+          <span className="font-bold sm:inline-block">TKOH Bookstore</span>
+        </Link>
+        <div className="flex-1" /> {/* Espaciador */}
+        <div className="flex items-center space-x-2">
+          {/* 2. Renderizado condicional */}
+          {isAuthenticated ? (
+            <Button asChild>
+              <Link to="/perfil">
+                {' '}
+                {/* Ruta por defecto al entrar */}
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                Ir al Panel
+              </Link>
+            </Button>
+          ) : (
+            <>
+              <Button variant="outline" asChild>
+                <Link to="/login">Iniciar Sesión</Link>
+              </Button>
+              <Button asChild>
+                <Link to="/register">Registrarse</Link>
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
