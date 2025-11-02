@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 // Quitamos la importación nombrada 'Navigate' que no se usa
 import { useNavigate } from 'react-router-dom'; // Renombramos Navigate a NavigateComponent para claridad
-import { useAuthStore } from '@/features/auth/model/authStore';
-import { LoginForm } from '@/features/auth/components/LoginForm'; // Verifica esta ruta
+import { useAuthStore } from '@/services/auth/authStore';
+import { LoginForm } from '@/modules/auth/components/LoginForm'; // Verifica esta ruta
 // Asegúrate que la ruta a roleUtils sea correcta según donde lo pusiste
 import { getRedirectPathForUser } from '@/utils/roleUtils'; // Esta ruta está bien confirmada por ti
 // import type { User } from '@/features/auth/interface/User'; // El tipo User sí se usa

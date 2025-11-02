@@ -2,7 +2,7 @@ import { useRef, useCallback } from 'react';
 // 1. Importamos IFrame para tipar el error 'frame'
 import { Client, type IMessage, type IFrame } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { useAuthStore } from '@/features/auth/model/authStore';
+import { useAuthStore } from '@/services/auth/authStore';
 
 type SubscriptionCallback = (message: any) => void;
 

@@ -14,8 +14,8 @@ import { VendedorPage } from '@/pages/roles/VendedorPage';
 import { UsuarioPage } from '@/pages/roles/UsuarioPage'; // *** DESCOMENTADO ***
 
 // Importar dependencias
-import { ProtectedRoute } from './ProtectedRoute';
-import { useAuthStore } from '@/features/auth/model/authStore';
+import { ProtectedRoute } from '@/routes/ProtectedRoute';
+import { useAuthStore } from '@/services/auth/authStore';
 import { getRedirectPathForUser } from '@/utils/roleUtils'; // Asegúrate que la ruta sea correcta (quizás '@/utils/roleUtils')
 
 export const AppRouter = () => {

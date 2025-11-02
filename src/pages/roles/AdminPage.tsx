@@ -1,5 +1,5 @@
 // --- src/pages/roles/AdminPage.tsx ---
-import { UserTable } from '@/features/user-management/components/UserTable'; // Ajusta la ruta si es necesario
+import { UserTable } from '@/modules/admin/components/UserTable'; // Ajusta la ruta si es necesario
 
 // Placeholder simple para la página principal del rol Admin
 export const AdminPage = () => {
