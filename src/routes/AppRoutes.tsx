@@ -6,8 +6,8 @@ import { HomePage } from '@/modules/Home/pages/HomePage';
 // Importar las páginas específicas de roles
 import { OwnerPage } from '@/modules/owner/pages/OwnerPage';
 import { AdminPage } from '@/modules/admin/pages/AdminPage';
-import { VendedorPage } from '@/modules/VendedorPage';
-import { UsuarioPage } from '@/modules/UsuarioPage'; // *** DESCOMENTADO ***
+import { VendedorPage } from '@/modules/vendedor/VendedorPage';
+import { UsuarioPage } from '@/modules/usuario/UsuarioPage'; // *** DESCOMENTADO ***
 
 // Importar dependencias
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
