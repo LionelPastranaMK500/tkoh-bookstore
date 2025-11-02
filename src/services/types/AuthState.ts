@@ -1,5 +1,5 @@
 // src/features/auth/interface/AuthState.ts
-import type { User } from '@/features/auth/interface/User';
+import type { User } from '@/services/types/User';
 export interface AuthState {
   user: User | null; // Cambiado de any o tipo simple a User
   accessToken: string | null;

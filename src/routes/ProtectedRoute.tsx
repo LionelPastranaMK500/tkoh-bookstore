@@ -1,8 +1,8 @@
 // src/providers/ProtectedRoute.tsx
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/services/auth/authStore';
-import type { RoleDto } from '@/features/auth/interface/RoleDto'; // Importar RoleDto
-import type { ProtectedRouteProps } from '@/features/auth/interface/Auxiliar';
+import type { RoleDto } from '@/services/types/role'; // Importar RoleDto
+import type { ProtectedRouteProps } from '@/services/types/Auxiliar';
 
 export const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const { isAuthenticated, user } = useAuthStore();

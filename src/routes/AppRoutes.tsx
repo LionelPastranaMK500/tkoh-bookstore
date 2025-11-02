@@ -1,17 +1,13 @@
 // src/providers/router.tsx
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
-import { HomePage } from '@/pages/HomePage';
-// import { UserProfilePage } from '@/pages/UserProfilePage';
-import { LoginPage } from '@/pages/LoginPage';
-import { NotFoundPage } from '@/pages/NotFoundPage';
-import { UnauthorizedPage } from '@/pages/UnauthorizedPage';
+import { HomePage } from '@/modules/Home/pages/HomePage';
 
 // Importar las páginas específicas de roles
-import { OwnerPage } from '@/pages/roles/OwnerPage';
-import { AdminPage } from '@/pages/roles/AdminPage';
-import { VendedorPage } from '@/pages/roles/VendedorPage';
-import { UsuarioPage } from '@/pages/roles/UsuarioPage'; // *** DESCOMENTADO ***
+import { OwnerPage } from '@/modules/owner/pages/OwnerPage';
+import { AdminPage } from '@/modules/admin/pages/AdminPage';
+import { VendedorPage } from '@/modules/VendedorPage';
+import { UsuarioPage } from '@/modules/UsuarioPage'; // *** DESCOMENTADO ***
 
 // Importar dependencias
 import { ProtectedRoute } from '@/routes/ProtectedRoute';

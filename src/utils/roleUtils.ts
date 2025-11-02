@@ -1,4 +1,4 @@
-import type { User } from '@/features/auth/interface/User';
+import type { User } from '@/services/types/User';
 
 // Define la jerarquía de roles (el más alto primero)
 // Asegúrate que estos nombres coincidan EXACTAMENTE con los `nombreRol` de tu API/DB

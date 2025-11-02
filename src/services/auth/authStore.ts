@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 // >>>>> RUTAS DE IMPORTACIÓN ACTUALIZADAS <<<<<
-import type { User } from '@/features/auth/interface/User';
+import type { User } from '@/services/types/User';
 import apiClient from '@/shared/api/axiosInstance';
-import type { LoginResponse } from '@/features/auth/interface/LoginResponse';
-import type { AuthState } from '@/features/auth/interface/AuthState';
-import type { ApiResponse } from '@/features/auth/interface/Auxiliar';
+import type { LoginResponse } from '@/services/types/LoginResponse';
+import type { AuthState } from '@/services/types/AuthState';
+import type { ApiResponse } from '@/services/types/Auxiliar';
 
 export const useAuthStore = create<AuthState>()(
   persist(

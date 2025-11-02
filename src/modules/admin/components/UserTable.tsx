@@ -26,8 +26,8 @@ import { ArrowUpDown, MoreHorizontal, UserPlus } from 'lucide-react'; // Iconos
 
 // Importar el hook y los tipos necesarios (rutas sin cambios aquí)
 import { useUsers } from '@/features/user-management/hooks/useUsers';
-import type { User } from '@/features/auth/interface/User';
-import type { RoleDto } from '@/features/auth/interface/RoleDto';
+import type { User } from '@/services/types/User';
+import type { RoleDto } from '@/services/types/role';
 
 // --- Componente CreateUserDialog (Placeholder) ---
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
