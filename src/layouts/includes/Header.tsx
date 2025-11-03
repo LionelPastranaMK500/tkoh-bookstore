@@ -15,7 +15,7 @@ export function Header() {
 
   return (
     <header className="top-0 z-50 sticky bg-background/95 backdrop-blur border-border/40 border-b w-full">
-      <div className="flex items-center max-w-screen-2xl h-14 container">
+      <div className="flex items-center h-14 container">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2 mr-6">
           <BookMarked className="w-6 h-6 text-primary" />

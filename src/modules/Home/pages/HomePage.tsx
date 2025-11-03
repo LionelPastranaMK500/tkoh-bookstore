@@ -1,3 +1,4 @@
+// src/modules/Home/pages/HomePage.tsx
 import { Link } from 'react-router-dom';
 import { Button } from '@/shared/ui/button';
 import {
@@ -14,14 +15,16 @@ import {
 export default function HomePage() {
   return (
     <>
-      {/* Sección Hero (Existente) */}
+      {/* --- CORRECCIÓN: Sección Hero --- */}
       <section className="container relative py-20 md:py-32 lg:py-40">
-        <div className="mx-auto flex max-w-[64rem] flex-col items-center justify-center text-center">
+        {/* 'max-w-[64rem]' FUE ELIMINADO de este div para que use el ancho del 'container' */}
+        <div className="mx-auto flex flex-col items-center justify-center text-center">
           <BookOpenCheck className="h-16 w-16 text-primary mb-6" />
           <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-6xl lg:leading-[1.1]">
             Bienvenido a TKOH Bookstore
           </h1>
-          <p className="mt-4 max-w-[42rem] text-lg text-muted-foreground sm:text-xl">
+          {/* 'max-w-[42rem]' también lo quitamos para consistencia, o lo ajustamos */}
+          <p className="mt-4 text-lg text-muted-foreground sm:text-xl">
             Tu solución integral y moderna para la gestión avanzada de
             librerías. Controla tu inventario, ventas y equipo, todo desde un
             solo lugar.
@@ -37,9 +40,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* --- NUEVO: Sección de Información (id="info") --- */}
-      <section id="info" className="container py-20 md:py-24 bg-secondary/30">
-        <div className="mx-auto max-w-5xl">
+      {/* --- CORRECCIÓN: Sección de Información (id="info") --- */}
+      <section id="info" className="w-full py-20 md:py-24 bg-secondary/30">
+        {/* 'max-w-5xl' FUE ELIMINADO de este div */}
+        <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">
             <Building className="inline-block h-8 w-8 mr-3" />
             Información de <span className="text-primary">Studios TKOH!</span>
@@ -69,9 +73,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* --- NUEVO: Sección Misión/Visión (id="mision-vision") --- */}
+      {/* --- CORRECCIÓN: Sección Misión/Visión (id="mision-vision") --- */}
       <section id="mision-vision" className="container py-20 md:py-24">
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-12 md:grid-cols-2">
+        {/* 'max-w-5xl' FUE ELIMINADO de este div */}
+        <div className="mx-auto grid grid-cols-1 gap-12 md:grid-cols-2">
           {/* Misión */}
           <div className="flex flex-col items-center text-center p-6 bg-card border rounded-lg shadow-sm">
             <Target className="h-10 w-10 text-primary" />
@@ -93,12 +98,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* --- NUEVO: Sección de Servicios (id="servicios") --- */}
-      <section
-        id="servicios"
-        className="container py-20 md:py-24 bg-secondary/30"
-      >
-        <div className="mx-auto max-w-5xl">
+      {/* --- CORRECCIÓN: Sección de Servicios (id="servicios") --- */}
+      <section id="servicios" className="w-full py-20 md:py-24 bg-secondary/30">
+        {/* 'max-w-5xl' FUE ELIMINADO de este div */}
+        <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">
             <LayoutGrid className="inline-block h-8 w-8 mr-3" />
             Nuestras Soluciones

@@ -4,7 +4,7 @@ import { Header } from './includes/Header';
 
 export function AuthLayout() {
   return (
-    <div className="relative flex flex-col bg-background min-h-screen">
+    <div className="relative flex flex-col bg-background min-h-screen w-full">
       <Header />
       <main className="flex-1">
         <Outlet />

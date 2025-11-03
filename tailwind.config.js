@@ -1,8 +1,8 @@
-import { Config } from 'tailwindcss';
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   darkMode: 'class',
   content: [
+    // Estos son los paths correctos para TU proyecto
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
     './src/shared/ui/**/*.{js,ts,jsx,tsx}',
@@ -10,6 +10,7 @@ const config: Config = {
   prefix: '',
   theme: {
     extend: {
+      // Toda tu personalización de 'theme' del archivo anterior va aquí
       container: {
         center: true,
         padding: '2rem',
@@ -73,9 +74,5 @@ const config: Config = {
       },
     },
   },
-  plugins: [
-    require('tailwindcss-animate'),
-  ],
+  plugins: [require('tailwindcss-animate')],
 };
-
-export default config;

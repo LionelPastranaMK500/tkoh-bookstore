@@ -1,73 +1,75 @@
+/* 1. LOS IMPORTS SIEMPRE VAN PRIMERO */
 @import 'react-toastify/dist/ReactToastify.css';
-@import "tailwindcss";
 @import 'tw-animate-css';
 
-body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-}
+/* 2. LUEGO, LAS DIRECTIVAS DE TAILWIND */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
+  /* --- TEMA CLARO: "Biblioteca Cálida" --- */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 21 20% 98%; /* Un 'hueso' o 'pergamino' muy claro */
+    --foreground: 25 25% 20%; /* Texto: Marrón oscuro (casi negro) */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%; /* Tarjetas: Blanco puro para que resalten */
+    --card-foreground: 25 25% 20%; /* Texto de tarjeta: Marrón oscuro */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 25 25% 20%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 25 65% 40%; /* Botones: Un marrón 'cuero' o 'madera' */
+    --primary-foreground: 21 20% 98%; /* Texto de botón: El color 'hueso' */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 30 50% 95%; /* Secciones: Un beige/crema muy suave */
+    --secondary-foreground: 25 25% 20%; /* Texto de sección: Marrón oscuro */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 30 30% 90%;
+    --muted-foreground: 25 20% 45%; /* Texto secundario: Un marrón-gris */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 30 50% 92%; /* Hover: Un beige/crema más oscuro */
+    --accent-foreground: 25 25% 20%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%; /* Error: Un rojo cálido */
+    --destructive-foreground: 21 20% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 30 30% 88%; /* Bordes: Un sepia/beige claro */
+    --input: 30 30% 92%; /* Inputs: Un beige muy claro */
+    --ring: 25 65% 40%; /* Foco: El marrón 'cuero' */
 
     --radius: 0.625rem;
   }
 
+  /* --- TEMA OSCURO: "Medianoche Apagado" --- */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 220 25% 10%; /* Fondo: Azul medianoche muy oscuro */
+    --foreground: 210 40% 92%; /* Texto: Un gris azulado claro */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 25% 15%; /* Tarjetas: Un azul oscuro ligeramente más claro */
+    --card-foreground: 210 40% 92%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 25% 10%;
+    --popover-foreground: 210 40% 92%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 210 80% 65%; /* Botones: Un azul 'eléctrico' apagado */
+    --primary-foreground: 220 25% 10%; /* Texto de botón: El fondo oscuro */
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 25% 15%; /* Secciones: Igual que las tarjetas */
+    --secondary-foreground: 210 40% 92%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 25% 20%;
+    --muted-foreground: 215 20% 65%; /* Texto secundario: Un gris azulado */
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 220 25% 22%; /* Hover: Un poco más claro */
+    --accent-foreground: 210 40% 92%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 63% 50%; /* Error: Un rojo apagado */
+    --destructive-foreground: 210 40% 92%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 220 25% 25%; /* Bordes: Apenas visibles */
+    --input: 220 25% 20%; /* Inputs */
+    --ring: 210 80% 65%; /* Foco: El azul 'eléctrico' */
   }
 }
 
@@ -76,4 +78,9 @@ body {
     border-color: hsl(var(--border));
     outline-color: hsl(var(--ring) / 0.5);
   }
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
