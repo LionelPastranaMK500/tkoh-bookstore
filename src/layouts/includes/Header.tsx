@@ -1,25 +1,59 @@
-import { BookMarked } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { Button } from '@/shared/ui/button';
+import { BookMarked, LayoutDashboard } from 'lucide-react';
+import { useAuthStore } from '@/services/auth/authStore';
+import { Navbar } from './Navbar'; // <-- 1. IMPORTAMOS EL NAVBAR
 
 /**
- * Header para el layout principal (privado).
- * Se mostrará cuando el usuario esté autenticado.
+ * Header (Público)
+ * Contiene el Logo, el Navbar (links de secciones) y los botones de Auth.
  */
 export function Header() {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
-      <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <div className="flex gap-6 md:gap-10">
-          <Link to="/perfil" className="flex items-center space-x-2">
-            <BookMarked className="h-6 w-6 text-primary" />
-            <span className="font-bold sm:inline-block">TKOH Bookstore</span>
-          </Link>
-        </div>
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center space-x-1">
-            {/* TODO: Aquí irá el Menú de Usuario (Avatar, Salir) */}
-            <p className="text-sm font-medium">Usuario Logueado</p>
-          </nav>
+    <header className="top-0 z-50 sticky bg-background/95 backdrop-blur border-border/40 border-b w-full">
+      <div className="flex items-center max-w-screen-2xl h-14 container">
+        {/* Logo */}
+        <Link to="/" className="flex items-center space-x-2 mr-6">
+          <BookMarked className="w-6 h-6 text-primary" />
+          <span className="sm:inline-block font-bold">TKOH Bookstore</span>
+        </Link>
+
+        {/* --- 2. USAMOS EL NAVBAR --- */}
+        {/* Solo mostrar el Navbar si estamos en la HomePage */}
+        {currentPath === '/' ? (
+          <Navbar />
+        ) : (
+          <div className="flex-1" /> // Espaciador en /login y /register
+        )}
+
+        {/* Botones de Autenticación (Derecha) */}
+        <div className="flex items-center space-x-2">
+          {isAuthenticated ? (
+            <Button asChild>
+              <Link to="/perfil">
+                <LayoutDashboard className="mr-2 w-4 h-4" />
+                Ir al Panel
+              </Link>
+            </Button>
+          ) : (
+            <>
+              {currentPath !== '/login' && (
+                <Button variant="outline" asChild>
+                  <Link to="/login">Iniciar Sesión</Link>
+                </Button>
+              )}
+              {currentPath !== '/register' && (
+                <Button asChild>
+                  <Link to="/register">Registrarse</Link>
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </header>
