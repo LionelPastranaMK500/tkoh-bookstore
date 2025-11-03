@@ -1,16 +1,13 @@
-// src/main.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { PrimeReactProvider } from 'primereact/api';
-import App from './App'; // Ruta relativa
+import App from './App';
 
-// --- STYLES ---
-// Siguiendo el patrón de 'sistema-de-gestion/main.jsx'
-import 'primereact/resources/primereact.min.css'; // Core
-import 'primeicons/primeicons.css'; // Iconos
-import './styles/primereact-styles.css'; // Tema (Archivo nuevo)
-import './styles/index.css'; // Tailwind/Globales
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import './styles/primereact-styles.css';
+import './styles/index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
