@@ -4,8 +4,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { PrimeReactProvider } from 'primereact/api';
 import App from './App';
 
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
+// import 'primereact/resources/primereact.min.css';
+// import 'primeicons/primeicons.css';
 import './styles/primereact-styles.css';
 import './styles/index.css';
 

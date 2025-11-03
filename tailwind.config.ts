@@ -1,24 +1,22 @@
-import type { Config } from 'tailwindcss';
+import type { Config } from 'tailwindcss'
+import tailwindcssAnimate from 'tailwindcss-animate'
 
 const config: Config = {
-  darkMode: 'class', // Habilita el modo oscuro basado en una clase en el HTML
+  darkMode: 'class',
   content: [
     './index.html',
-    './src/**/*.{js,ts,jsx,tsx}', // Escanea todos los archivos relevantes en src
+    './src/**/*.{js,ts,jsx,tsx}'
   ],
-  prefix: '', // Sin prefijo para las clases de Tailwind
+  prefix: '',
   theme: {
     container: {
-      center: true, // Centra los contenedores por defecto
-      padding: '2rem', // Añade padding por defecto
+      center: true,
+      padding: '2rem',
       screens: {
         '2xl': '1400px',
       },
     },
     extend: {
-      // NOTA: Los colores, bordes, etc., de shadcn/ui
-      // se definen en src/styles/index.css usando variables CSS.
-      // Esta sección se usa para animaciones.
       keyframes: {
         'accordion-down': {
           from: { height: '0' },
@@ -36,9 +34,8 @@ const config: Config = {
     },
   },
   plugins: [
-    // Plugin requerido por shadcn/ui para las animaciones
-    require('tailwindcss-animate'),
+    tailwindcssAnimate,
   ],
-};
+}
 
-export default config;
+export default config

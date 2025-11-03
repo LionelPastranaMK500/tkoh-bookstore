@@ -1,5 +1,4 @@
 /* src/styles/primereact-styles.css /
 / Este archivo importa el TEMA, replicando 'sistema-de-gestion' */
-@import 'primereact/resources/themes/aura-light-blue/theme.css';
-
+@import '../../node_modules/primereact/resources/themes/bootstrap4-light-blue/theme.css';
 /* Puedes añadir tus overrides de PrimeReact aquí */
