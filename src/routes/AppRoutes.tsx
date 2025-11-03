@@ -1,87 +1,34 @@
-// src/providers/router.tsx
-import { Route, Routes, Navigate } from 'react-router-dom';
-import { MainLayout } from '@/layouts/MainLayout';
-import { HomePage } from '@/modules/Home/pages/HomePage';
+// src/routes/AppRoutes.tsx
+import { Route, Routes } from 'react-router-dom';
 
-// Importar las páginas específicas de roles
-import { OwnerPage } from '@/modules/owner/pages/OwnerPage';
-import { AdminPage } from '@/modules/admin/pages/AdminPage';
-import { VendedorPage } from '@/modules/vendedor/VendedorPage';
-import { UsuarioPage } from '@/modules/usuario/UsuarioPage'; // *** DESCOMENTADO ***
+// Layouts
+import { AuthLayout } from '../layouts/AuthLayout';
 
-// Importar dependencias
-import { ProtectedRoute } from '@/routes/ProtectedRoute';
-import { useAuthStore } from '@/services/auth/authStore';
-import { getRedirectPathForUser } from '@/utils/roleUtils'; // Asegúrate que la ruta sea correcta (quizás '@/utils/roleUtils')
+// Páginas Públicas (contenedores de lógica)
+import HomePage from '@/modules/Home/pages/HomePage';
+import { LoginPage } from '@/modules/auth/LoginPage';
+import { RegisterPage } from '@/modules/auth/RegisterPage';
+import { ForgotPasswordPage } from '@/modules/auth/ForgotPasswordPage';
+import { ResetPasswordPage } from '@/modules/auth/ResetPassword';
+
+// Páginas Comunes (Errores)
+import { NotFoundPage } from '../modules/common/NotFoundPage';
+import { UnauthorizedPage } from '../modules/common/UnauthorizedPage';
 
 export const AppRouter = () => {
-  const { isAuthenticated, user } = useAuthStore();
-
-  const mainUserPath = isAuthenticated
-    ? getRedirectPathForUser(user)
-    : '/login';
-
   return (
     <Routes>
-      {/* --- Rutas Públicas --- */}
-      <Route
-        path="/login"
-        element={
-          isAuthenticated ? (
-            <Navigate to={mainUserPath} replace />
-          ) : (
-            <LoginPage />
-          )
-        }
-      />
+      {/* --- GRUPO 1: Rutas Públicas (envueltas en AuthLayout) --- */}
+      <Route element={<AuthLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+      </Route>
+
+      {/* --- Rutas de Error (fuera de cualquier layout) --- */}
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
-      {/* --- Rutas Protegidas (Requieren al menos estar autenticado) --- */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<MainLayout />}>
-          {/* La ruta raíz ahora redirige a mainUserPath si está autenticado */}
-          <Route
-            index
-            element={
-              isAuthenticated ? (
-                <Navigate to={mainUserPath} replace />
-              ) : (
-                <HomePage />
-              )
-            }
-          />
-
-          {/* *** NUEVA RUTA PARA USUARIO *** */}
-          {/* Ruta específica para usuarios autenticados con rol USUARIO (o superior) */}
-          <Route path="usuario" element={<UsuarioPage />} />
-
-          {/* <Route path="profile" element={<UserProfilePage />} /> */}
-        </Route>{' '}
-        {/* Fin MainLayout */}
-      </Route>{' '}
-      {/* Fin Protección básica */}
-      {/* --- Rutas Protegidas por Rol Específico --- */}
-      <Route element={<ProtectedRoute allowedRoles={['OWNER']} />}>
-        <Route path="/owner" element={<MainLayout />}>
-          <Route index element={<OwnerPage />} />
-        </Route>
-      </Route>
-      <Route element={<ProtectedRoute allowedRoles={['OWNER', 'ADMIN']} />}>
-        <Route path="/admin" element={<MainLayout />}>
-          <Route index element={<AdminPage />} />
-          <Route path="user-management" element={<AdminPage />} />{' '}
-          {/* O UserManagementPage */}
-        </Route>
-      </Route>
-      <Route
-        element={
-          <ProtectedRoute allowedRoles={['OWNER', 'ADMIN', 'VENDEDOR']} />
-        }
-      >
-        <Route path="/vendedor" element={<MainLayout />}>
-          <Route index element={<VendedorPage />} />
-        </Route>
-      </Route>
-      {/* --- Ruta Catch-all --- */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

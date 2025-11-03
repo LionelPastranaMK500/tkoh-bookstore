@@ -1,40 +1,34 @@
-import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+// src/App.tsx
 import { ToastContainer } from 'react-toastify';
-import { AppRouter } from '@/routes/AppRoutes';
+import { AppRouter } from './routes/AppRoutes'; // Ruta relativa
 
-// 1. Creamos la instancia del cliente aquí (movido de main.tsx)
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
+// --- IMPORTS DE ESTILO ---
+// Siguiendo el patrón de sistema-de-gestion/src/App.jsx
+import 'react-toastify/dist/ReactToastify.css'; // Toastify (ruta corregida)
+// Los otros estilos se movieron a main.tsx
 
 function App() {
   return (
-    // 2. Envolvemos todo con los providers
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        {/* 3. Renderizamos el enrutador */}
-        <AppRouter />
-        {/* 4. Mantenemos el ToastContainer aquí */}
-        <ToastContainer
-          position="bottom-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </QueryClientProvider>
-    </BrowserRouter>
+    <>
+      {/* AppRouter ya no está comentado.
+QueryClientProvider se quitó como pediste.
+*/}
+      <AppRouter />
+
+      {/* Mantenemos el ToastContainer aquí */}
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    </>
   );
 }
 

@@ -1,11 +1,13 @@
+// src/services/auth/authStore.ts
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-// >>>>> RUTAS DE IMPORTACIÓN ACTUALIZADAS <<<<<
+import apiClient from '@/services/api';
 import type { User } from '@/services/types/User';
-import apiClient from '@/shared/api/axiosInstance';
-import type { LoginResponse } from '@/services/types/LoginResponse';
-import type { AuthState } from '@/services/types/AuthState';
+import type { AuthState, LoginCredentials } from '@/services/types/auth';
 import type { ApiResponse } from '@/services/types/Auxiliar';
+import type { LoginResponse } from '@/services/types/auth'; // Asegurarse que LoginResponse esté en auth.ts
+
+// ... resto del archivo authStore.ts ...
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -14,7 +16,8 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       isAuthenticated: false,
       // --- LOGIN MODIFICADO ---
-      login: async (credentials) => {
+      login: async (credentials: LoginCredentials) => {
+        // Usar tipo LoginCredentials
         try {
           // 1. Llamar al endpoint de login
           const { data: loginData } = await apiClient.post<

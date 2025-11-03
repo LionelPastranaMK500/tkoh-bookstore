@@ -1,14 +1,23 @@
+// src/main.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App'; // Importa el App.tsx actualizado
-import '@/styles/index.css'; // Estilos globales
-import 'primereact/resources/themes/aura-light-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'react-toastify/dist/ReactToastify.min.css';
+import { BrowserRouter } from 'react-router-dom';
+import { PrimeReactProvider } from 'primereact/api';
+import App from './App'; // Ruta relativa
+
+// --- STYLES ---
+// Siguiendo el patrón de 'sistema-de-gestion/main.jsx'
+import 'primereact/resources/primereact.min.css'; // Core
+import 'primeicons/primeicons.css'; // Iconos
+import './styles/primereact-styles.css'; // Tema (Archivo nuevo)
+import './styles/index.css'; // Tailwind/Globales
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <PrimeReactProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </PrimeReactProvider>
   </React.StrictMode>,
 );
