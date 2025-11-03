@@ -12,11 +12,11 @@ export function Navbar() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 max-w-screen-2xl items-center">
-        <Link to="/" className="mr-6 flex items-center space-x-2">
-          <BookMarked className="h-6 w-6 text-primary" />
-          <span className="font-bold sm:inline-block">TKOH Bookstore</span>
+    <header className="top-0 z-50 sticky bg-background/95 backdrop-blur border-border/40 border-b w-full">
+      <div className="flex items-center max-w-screen-2xl h-14 container">
+        <Link to="/" className="flex items-center space-x-2 mr-6">
+          <BookMarked className="w-6 h-6 text-primary" />
+          <span className="sm:inline-block font-bold">TKOH Bookstore</span>
         </Link>
         <div className="flex-1" /> {/* Espaciador */}
         <div className="flex items-center space-x-2">
@@ -26,7 +26,7 @@ export function Navbar() {
               <Link to="/perfil">
                 {' '}
                 {/* Ruta por defecto al entrar */}
-                <LayoutDashboard className="mr-2 h-4 w-4" />
+                <LayoutDashboard className="mr-2 w-4 h-4" />
                 Ir al Panel
               </Link>
             </Button>
