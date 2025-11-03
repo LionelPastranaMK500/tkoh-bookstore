@@ -29,11 +29,6 @@
     "noUncheckedSideEffectImports": true
   },
   "include": [
-    "src",
-    "@/shared/ui/table.tsx",
-    "@/shared/ui/label.tsx",
-    "@/shared/ui/input.tsx",
-    "@/shared/ui/card.tsx",
-    "@/shared/ui/button.tsx"
+    "src"
   ]
 }
