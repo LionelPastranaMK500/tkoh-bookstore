@@ -1,47 +1,69 @@
-import { Link } from 'react-router-dom';
-import { Button } from '@/shared/ui/button';
-import { BookMarked, LayoutDashboard } from 'lucide-react';
-import { useAuthStore } from '@/services/auth/authStore';
+import React from 'react';
+
+// Función para scroll suave
+const scrollToSection = (
+  e: React.MouseEvent<HTMLAnchorElement>,
+  sectionId: string,
+) => {
+  e.preventDefault();
+
+  // --- CAMBIO: Caso especial para "top" (Home) ---
+  if (sectionId === 'top') {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+    return; // Salir de la función aquí
+  }
+
+  // Lógica existente para otras secciones
+  const section = document.getElementById(sectionId);
+  if (section) {
+    window.scrollTo({
+      top: section.offsetTop - 80, // Ajustar por la altura del header
+      behavior: 'smooth',
+    });
+  }
+};
 
 /**
- * Navbar para las páginas públicas (Home, Login, etc.)
- * Muestra "Login" o "Ir al Panel" según el estado de autenticación.
+ * Componente que renderiza SOLO los enlaces de navegación
+ * para las secciones de la HomePage.
  */
 export function Navbar() {
-  // 1. Leer el estado de autenticación de Zustand
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
   return (
-    <header className="top-0 z-50 sticky bg-background/95 backdrop-blur border-border/40 border-b w-full">
-      <div className="flex items-center max-w-screen-2xl h-14 container">
-        <Link to="/" className="flex items-center space-x-2 mr-6">
-          <BookMarked className="w-6 h-6 text-primary" />
-          <span className="sm:inline-block font-bold">TKOH Bookstore</span>
-        </Link>
-        <div className="flex-1" /> {/* Espaciador */}
-        <div className="flex items-center space-x-2">
-          {/* 2. Renderizado condicional */}
-          {isAuthenticated ? (
-            <Button asChild>
-              <Link to="/perfil">
-                {' '}
-                {/* Ruta por defecto al entrar */}
-                <LayoutDashboard className="mr-2 w-4 h-4" />
-                Ir al Panel
-              </Link>
-            </Button>
-          ) : (
-            <>
-              <Button variant="outline" asChild>
-                <Link to="/login">Iniciar Sesión</Link>
-              </Button>
-              <Button asChild>
-                <Link to="/register">Registrarse</Link>
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
-    </header>
+    <nav className="hidden md:flex flex-1 items-center space-x-6">
+      {/* --- ENLACE AÑADIDO --- */}
+      <a
+        href="#" // href="#" es convencional para "top"
+        onClick={(e) => scrollToSection(e, 'top')}
+        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+      >
+        Home
+      </a>
+      {/* --- FIN DE ENLACE AÑADIDO --- */}
+
+      <a
+        href="#info"
+        onClick={(e) => scrollToSection(e, 'info')}
+        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+      >
+        Información
+      </a>
+      <a
+        href="#mision-vision"
+        onClick={(e) => scrollToSection(e, 'mision-vision')}
+        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+      >
+        Misión y Visión
+      </a>
+      <a
+        href="#servicios"
+        onClick={(e) => scrollToSection(e, 'servicios')}
+        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+      >
+        Soluciones
+      </a>
+    </nav>
   );
 }

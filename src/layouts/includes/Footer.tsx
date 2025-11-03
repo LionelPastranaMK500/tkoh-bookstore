@@ -2,6 +2,7 @@ import { Github, Linkedin, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function Footer() {
+
   const logoUrl = '/Logo_STKH.png';
 
   return (

@@ -6,36 +6,26 @@ import { getRedirectPathForUser } from '@/utils/roleUtils';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated, user } = useAuthStore((state) => ({
-    login: state.login,
-    isAuthenticated: state.isAuthenticated,
-    user: state.user,
-  }));
+
+  const login = useAuthStore((state) => state.login);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Redirección si ya está autenticado
   useEffect(() => {
     if (isAuthenticated && user) {
       const redirectPath = getRedirectPathForUser(user);
-      console.log(
-        `[LoginPage Effect] Already authenticated. Redirecting to: ${redirectPath}`,
-      );
       navigate(redirectPath, { replace: true });
     }
   }, [isAuthenticated, user, navigate]);
 
-  // Callback para el formulario
   const handleLoginSuccess = () => {
     const currentUser = useAuthStore.getState().user;
     const redirectPath = getRedirectPathForUser(currentUser);
-    console.log(
-      `[handleLoginSuccess] Login successful. Redirecting to: ${redirectPath}`,
-    );
     navigate(redirectPath, { replace: true });
   };
-
-  // Muestra carga si está auth pero esperando datos del usuario
   if (isAuthenticated && !user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -44,13 +34,10 @@ export const LoginPage = () => {
     );
   }
 
-  // Muestra el formulario de login
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
-          Iniciar Sesión
-        </h2>
+    <div className="flex items-center justify-center py-12 md:py-20">
+      <div className="p-8 bg-card text-card-foreground rounded-lg shadow-md w-full max-w-md border">
+        <h2 className="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
         {error && (
           <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded">
             {error}
