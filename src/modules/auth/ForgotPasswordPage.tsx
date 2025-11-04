@@ -11,7 +11,6 @@ export const ForgotPasswordPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
   const forgotPassword = useAuthStore((state) => state.forgotPassword);
 
   const handleForgotSubmit = async (data: ForgotPasswordFormValues) => {
@@ -21,6 +20,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
     try {
       const response = await forgotPassword(data);
+
       if (response.success) {
         setSuccessMessage(
           response.message ||
@@ -28,7 +28,7 @@ export const ForgotPasswordPage: React.FC = () => {
         );
         toast.success('Solicitud enviada. Revisa tus mensajes SMS.');
         setTimeout(() => {
-          navigate('/?view=reset');
+          navigate('/reset-password');
         }, 3000);
       } else {
         setError(response.message || 'Ocurrió un error.');
@@ -44,6 +44,7 @@ export const ForgotPasswordPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
   return (
     <div className="container py-12">
       <ForgotPasswordForm

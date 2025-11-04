@@ -85,7 +85,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
           {/* Celular (Opcional) */}
           <div>
-            <Label htmlFor="celular">Celular (Opcional)</Label>
+            <Label htmlFor="celular">Celular </Label>
             <Input
               id="celular"
               placeholder="Ej: 987654321"

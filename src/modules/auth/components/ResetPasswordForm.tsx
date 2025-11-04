@@ -59,7 +59,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
               type="email"
               {...register('email')}
               aria-invalid={errors.email ? 'true' : 'false'}
-              disabled={isLoading || !!defaultEmail} // Deshabilitar si vino de la URL
+              disabled={isLoading || !!defaultEmail}
               readOnly={!!defaultEmail}
             />
             {errors.email && (
