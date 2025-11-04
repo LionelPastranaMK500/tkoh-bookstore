@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
@@ -12,35 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/ui/card';
-
-// Esquema de validación
-export const resetPasswordSchema = z
-  .object({
-    email: z.email('Debe ser un email válido'),
-    otp: z
-      .string()
-      .length(6, 'El código OTP debe tener 6 dígitos')
-      .regex(/^\d{6}$/, 'El código debe ser numérico'),
-    newPassword: z
-      .string()
-      .min(8, 'La nueva contraseña debe tener al menos 8 caracteres'),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Las contraseñas no coinciden',
-    path: ['confirmPassword'],
-  });
-
-// Tipo inferido
-export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
-
-// Props
-interface ResetPasswordFormProps {
-  onSubmit: (data: ResetPasswordFormValues) => void;
-  isLoading: boolean;
-  error: string | null;
-  defaultEmail: string; // Email pre-cargado desde la URL
-}
+import type { ResetPasswordFormValues } from '@/services/types/auth/ResetPasswordSchema';
+import { resetPasswordSchema } from '@/services/types/auth/ResetPasswordSchema';
+import type { ResetPasswordFormProps } from '@/services/types/auth/ResetPasswordFormProps';
 
 export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
   onSubmit,
@@ -73,7 +46,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
       </CardHeader>
       <CardContent>
         {error && (
-          <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-md">
+          <div className="mb-4 p-3 bg-destructive/10 text-destructive rounded-md">
             {error}
           </div>
         )}
@@ -90,7 +63,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
               readOnly={!!defaultEmail}
             />
             {errors.email && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="text-destructive text-sm mt-1">
                 {errors.email.message}
               </p>
             )}
@@ -107,7 +80,9 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
               disabled={isLoading}
             />
             {errors.otp && (
-              <p className="text-red-500 text-sm mt-1">{errors.otp.message}</p>
+              <p className="text-destructive text-sm mt-1">
+                {errors.otp.message}
+              </p>
             )}
           </div>
 
@@ -122,7 +97,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
               disabled={isLoading}
             />
             {errors.newPassword && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="text-destructive text-sm mt-1">
                 {errors.newPassword.message}
               </p>
             )}
@@ -139,7 +114,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
               disabled={isLoading}
             />
             {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="text-destructive text-sm mt-1">
                 {errors.confirmPassword.message}
               </p>
             )}

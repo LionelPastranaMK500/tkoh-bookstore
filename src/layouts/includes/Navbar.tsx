@@ -1,35 +1,28 @@
 import React from 'react';
 
-// Función para scroll suave
 const scrollToSection = (
   e: React.MouseEvent<HTMLAnchorElement>,
   sectionId: string,
 ) => {
   e.preventDefault();
 
-  // --- CAMBIO: Caso especial para "top" (Home) ---
   if (sectionId === 'top') {
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
-    return; // Salir de la función aquí
+    return;
   }
 
-  // Lógica existente para otras secciones
   const section = document.getElementById(sectionId);
   if (section) {
     window.scrollTo({
-      top: section.offsetTop - 80, // Ajustar por la altura del header
+      top: section.offsetTop - 80,
       behavior: 'smooth',
     });
   }
 };
 
-/**
- * Componente que renderiza SOLO los enlaces de navegación
- * para las secciones de la HomePage.
- */
 export function Navbar() {
   return (
     <nav className="hidden md:flex flex-1 items-center space-x-6">
@@ -41,7 +34,6 @@ export function Navbar() {
       >
         Home
       </a>
-      {/* --- FIN DE ENLACE AÑADIDO --- */}
 
       <a
         href="#info"

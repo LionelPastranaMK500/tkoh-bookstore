@@ -1,17 +1,12 @@
 // src/routes/AppRoutes.tsx
 import { Route, Routes } from 'react-router-dom';
-
-// Layouts
 import { AuthLayout } from '../layouts/AuthLayout';
-
-// Páginas Públicas (contenedores de lógica)
 import HomePage from '@/modules/Home/pages/HomePage';
 import { LoginPage } from '@/modules/auth/LoginPage';
 import { RegisterPage } from '@/modules/auth/RegisterPage';
 import { ForgotPasswordPage } from '@/modules/auth/ForgotPasswordPage';
-import { ResetPasswordPage } from '@/modules/auth/ResetPassword';
+import { ResetPasswordPage } from '@/modules/auth/ResetPasswordPage';
 
-// Páginas Comunes (Errores)
 import { NotFoundPage } from '../modules/common/NotFoundPage';
 import { UnauthorizedPage } from '../modules/common/UnauthorizedPage';
 

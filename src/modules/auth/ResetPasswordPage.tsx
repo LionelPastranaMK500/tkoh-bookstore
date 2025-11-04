@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import {
-  ResetPasswordForm,
-  type ResetPasswordFormValues,
-} from '@/modules/auth/components/ResetPasswordForm';
-import apiClient from '@/services/api';
 import { toast } from 'react-toastify';
+import { ResetPasswordForm } from '@/modules/auth/components/ResetPasswordForm';
+import type { ResetPasswordFormValues } from '@/services/types/auth/ResetPasswordSchema';
+import { useAuthStore } from '@/services/auth/authStore';
 
 export const ResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,27 +13,22 @@ export const ResetPasswordPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const resetPassword = useAuthStore((state) => state.resetPassword);
+
   const handleResetSubmit = async (data: ResetPasswordFormValues) => {
     setError(null);
     setIsLoading(true);
 
     try {
-      // El DTO de la API espera { email, otp, newPassword, confirmPassword }
-      const response = await apiClient.post(
-        '/api/v1/auth/reset-password',
-        data,
-      );
+      const response = await resetPassword(data);
 
-      if (response.data.success) {
-        toast.success(
-          response.data.message || '¡Contraseña actualizada con éxito!',
-        );
-        // Redirigir al login
+      if (response.success) {
+        toast.success(response.message || '¡Contraseña actualizada con éxito!');
         setTimeout(() => {
-          navigate('/?view=login');
+          navigate('/login');
         }, 3000);
       } else {
-        setError(response.data.message || 'Ocurrió un error.');
+        setError(response.message || 'Ocurrió un error.');
       }
     } catch (err: any) {
       console.error('Error en reset-password:', err);

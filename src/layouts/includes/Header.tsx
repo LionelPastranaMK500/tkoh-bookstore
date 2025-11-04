@@ -24,11 +24,7 @@ export function Header() {
 
         {/* --- 2. USAMOS EL NAVBAR --- */}
         {/* Solo mostrar el Navbar si estamos en la HomePage */}
-        {currentPath === '/' ? (
-          <Navbar />
-        ) : (
-          <div className="flex-1" /> // Espaciador en /login y /register
-        )}
+        {currentPath === '/' ? <Navbar /> : <div className="flex-1" />}
 
         {/* Botones de Autenticación (Derecha) */}
         <div className="flex items-center space-x-2">

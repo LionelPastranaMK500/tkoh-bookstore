@@ -1,8 +1,6 @@
 /* 1. LOS IMPORTS SIEMPRE VAN PRIMERO */
 @import 'react-toastify/dist/ReactToastify.css';
 @import 'tw-animate-css';
-
-/* 2. LUEGO, LAS DIRECTIVAS DE TAILWIND */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

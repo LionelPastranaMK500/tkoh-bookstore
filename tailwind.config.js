@@ -2,7 +2,6 @@
 module.exports = {
   darkMode: 'class',
   content: [
-    // Estos son los paths correctos para TU proyecto
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
     './src/shared/ui/**/*.{js,ts,jsx,tsx}',

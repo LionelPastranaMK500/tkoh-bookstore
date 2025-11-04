@@ -1,30 +1,14 @@
-// src/shared/api/axiosInstance.ts
+// src/services/api.ts
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/services/auth/authStore';
+
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
 });
-// Variable para controlar si ya se está refrescando el token
-let isRefreshing = false;
-// Cola de peticiones fallidas que esperan un nuevo token
-let failedQueue: Array<{
-  resolve: (value: unknown) => void;
-  reject: (reason?: any) => void;
-}> = [];
-const processQueue = (
-  error: AxiosError | null,
-  token: string | null = null,
-) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-  failedQueue = [];
-};
+
 // 1. Interceptor de Petición (Request Interceptor)
+// ESTE ESTÁ PERFECTO Y ES VITAL
+// Añade el token 'Bearer' a todas las peticiones
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const { accessToken } = useAuthStore.getState();
@@ -37,64 +21,35 @@ apiClient.interceptors.request.use(
     return Promise.reject(error);
   },
 );
+
 // 2. Interceptor de Respuesta (Response Interceptor)
+// ESTA ES LA VERSIÓN CORREGIDA Y SIMPLIFICADA
 apiClient.interceptors.response.use(
   (response) => {
+    // Si la respuesta es exitosa (2xx), solo la devuelve
     return response;
   },
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
-    // Si el error no es 401, o si la petición ya es un reintento,rechazar
-    if (error.response?.status !== 401 || originalRequest._retry) {
-      return Promise.reject(error);
+
+    // Si el error es 401 (No Autorizado) y NO es un reintento
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      console.warn('Token JWT expirado o inválido. Cerrando sesión.');
+
+      // Llama a la función logout del "cerebro" (authStore)
+      // Esto limpiará el accessToken del estado y de localStorage.
+      useAuthStore.getState().logout();
+
+      // Opcional: Redirigir al usuario a la página de login
+      // (Asegúrate de no crear un bucle infinito si /login también falla)
+      // window.location.href = '/login';
     }
-    if (isRefreshing) {
-      // Si ya se está refrescando, añadir la petición a la cola deespera
-      return new Promise(function (resolve, reject) {
-        failedQueue.push({ resolve, reject });
-      })
-        .then((token) => {
-          originalRequest.headers['Authorization'] = 'Bearer ' + token;
-          return apiClient(originalRequest);
-        })
-        .catch((err) => {
-          return Promise.reject(err);
-        });
-    }
-    originalRequest._retry = true;
-    isRefreshing = true;
-    const { refreshToken, logout } = useAuthStore.getState();
-    if (!refreshToken) {
-      logout();
-      return Promise.reject(error);
-    }
-    try {
-      // Intentar refrescar el token
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
-        {
-          refreshToken,
-        },
-      );
-      const newAccessToken = data.accessToken;
-      // Actualizar el token en el store de Zustand
-      useAuthStore.getState().setAccessToken(newAccessToken);
-      // Actualizar la cabecera de la petición original
-      originalRequest.headers.Authorization = `Bearer${newAccessToken}`;
-      // Procesar la cola de peticiones pendientes con el nuevo token
-      processQueue(null, newAccessToken);
-      // Reintentar la petición original
-      return apiClient(originalRequest);
-    } catch (refreshError) {
-      // Si el refresco falla, desloguear al usuario
-      processQueue(refreshError as AxiosError, null);
-      logout();
-      return Promise.reject(refreshError);
-    } finally {
-      isRefreshing = false;
-    }
+
+    // Para cualquier otro error (o si es un 401 ya reintentado),
+    // simplemente rechaza la promesa para que la lógica (try/catch) lo maneje.
+    return Promise.reject(error);
   },
 );
 

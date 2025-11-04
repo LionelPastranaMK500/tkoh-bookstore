@@ -3,11 +3,14 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import apiClient from '@/services/api';
 import type { User } from '@/services/types/User';
-import type { AuthState, LoginCredentials } from '@/services/types/auth';
-import type { ApiResponse } from '@/services/types/Auxiliar';
-import type { LoginResponse } from '@/services/types/auth'; // Asegurarse que LoginResponse esté en auth.ts
-
-// ... resto del archivo authStore.ts ...
+import type { ApiResponse } from '@/services/types/ApiResponse';
+import type { AuthState } from '@/services/types/AuthState';
+import type { LoginCredentials } from '@/services/types/auth/LoginCredentials';
+import type { LoginResponse } from '@/services/types/auth/LoginResponse';
+import type { RegisterCredentials } from '@/services/types/auth/RegisterCredentials';
+import type { RegisterResponse } from '@/services/types/auth/RegisterResponse';
+import type { ForgotPasswordCredentials } from '@/services/types/auth/ForgotPasswordCredentials';
+import type { ResetPasswordCredentials } from '@/services/types/auth/ResetPasswordCredentials';
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -15,155 +18,169 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       accessToken: null,
       isAuthenticated: false,
-      // --- LOGIN MODIFICADO ---
+
+      // --- 1. LOGIN ---
       login: async (credentials: LoginCredentials) => {
-        // Usar tipo LoginCredentials
+        console.log('Iniciando login con:', credentials.email);
         try {
-          // 1. Llamar al endpoint de login
           const { data: loginData } = await apiClient.post<
             ApiResponse<LoginResponse>
-          >('/api/v1/auth/login', credentials); // Usamos la interfaz ApiResponse genérica
+          >('/api/v1/auth/login', credentials);
 
           if (loginData.success && loginData.data.token) {
             const token = loginData.data.token;
-            // 2. Guardar el token en el estado y en el header por defecto de apiClient
             set({
               accessToken: token,
-              isAuthenticated: true, // Marcamos como autenticado TEMPORALMENTE
-              user: null, // Limpiamos datos de usuario previos
+              isAuthenticated: true,
+              user: null,
             });
             apiClient.defaults.headers.common['Authorization'] =
               `Bearer ${token}`;
-
-            // 3. Llamar a la nueva acción para obtener los datos del usuario
-            await get().fetchUser();
-
+            await get().fetchUser(); // Llama a fetchUser después de loguear
             console.log('Login successful, user data fetched.');
           } else {
-            console.error('Login API error:', loginData.message);
-            // Limpiar estado en caso de error de API tras respuesta 200 OK
-            get().logout(); // Llama a logout para limpiar estado
+            get().logout();
             throw new Error(
               loginData.message || 'Error en la respuesta del servidor',
             );
           }
         } catch (error: any) {
-          console.error('Login request failed:', error);
-          // Limpiar estado en caso de error de red o 4xx/5xx
-          get().logout(); // Llama a logout para limpiar estado
-          // Relanzar el error para que el componente LoginForm pueda manejarlo
+          get().logout(); // Limpia el estado si el login falla
           throw error;
         }
       },
 
-      // --- NUEVA ACCIÓN: FETCH USER ---
+      // --- 2. REGISTER ---
+      register: async (credentials: RegisterCredentials) => {
+        console.log('Iniciando registro para:', credentials.email);
+        try {
+          // Llama al endpoint y devuelve la respuesta
+          const { data: registerData } = await apiClient.post<
+            ApiResponse<RegisterResponse>
+          >('/api/v1/auth/register', credentials);
+
+          return registerData;
+        } catch (error: any) {
+          console.error('Register request failed in store:', error);
+          throw error; // La página que llama manejará el error
+        }
+      },
+
+      // --- 3. FORGOT PASSWORD ---
+      forgotPassword: async (credentials: ForgotPasswordCredentials) => {
+        console.log('Solicitando OTP para:', credentials.identificador);
+        try {
+          // Llama al endpoint y devuelve la respuesta
+          const { data: forgotData } = await apiClient.post<ApiResponse<void>>(
+            '/api/v1/auth/forgot-password',
+            credentials,
+          );
+          return forgotData;
+        } catch (error: any) {
+          console.error('Forgot password request failed in store:', error);
+          throw error;
+        }
+      },
+
+      // --- 4. RESET PASSWORD ---
+      resetPassword: async (credentials: ResetPasswordCredentials) => {
+        console.log('Reseteando contraseña para:', credentials.email);
+        try {
+          // Llama al endpoint y devuelve la respuesta
+          const { data: resetData } = await apiClient.post<ApiResponse<void>>(
+            '/api/v1/auth/reset-password',
+            credentials,
+          );
+          return resetData;
+        } catch (error: any) {
+          console.error('Reset password request failed in store:', error);
+          throw error;
+        }
+      },
+
+      // --- 5. FETCH USER (Lógica de soporte) ---
       fetchUser: async () => {
         const token = get().accessToken;
         if (!token) {
           console.log('fetchUser skipped: No access token');
-          // Podríamos llamar a logout aquí si se espera token pero no hay
-          // get().logout();
-          return; // Salir si no hay token
+          return;
         }
         try {
-          // Asegúrate que apiClient tenga el token en sus headers por defecto
+          // Asegurarnos que el header esté puesto (para rehidratación)
           if (!apiClient.defaults.headers.common['Authorization']) {
             apiClient.defaults.headers.common['Authorization'] =
               `Bearer ${token}`;
           }
 
-          // Llamar al endpoint que devuelve los datos del usuario logueado (/api/v1/users/me)
           const { data: userDataResponse } =
-            await apiClient.get<ApiResponse<User>>('/api/v1/users/me'); // Esperamos ApiResponse<User> (ajusta si tu API devuelve UsuarioDetailDto aquí)
+            await apiClient.get<ApiResponse<User>>('/api/v1/users/me');
 
           if (userDataResponse.success && userDataResponse.data) {
-            // Guardar los datos del usuario en el estado
-            set({ user: userDataResponse.data, isAuthenticated: true }); // Confirmamos autenticación ahora que tenemos datos
+            set({ user: userDataResponse.data, isAuthenticated: true });
             console.log('User data fetched and stored:', userDataResponse.data);
           } else {
             console.error('Fetch user API error:', userDataResponse.message);
-            // Si falla obtener datos del usuario DESPUÉS de tener token, es un error -> logout
-            get().logout();
+            get().logout(); // Si falla obtener datos, cerramos sesión
             throw new Error(
               userDataResponse.message || 'Error al obtener datos del usuario',
             );
           }
         } catch (error) {
           console.error('Fetch user request failed:', error);
-          // Si falla la petición de datos del usuario, consideramos que no está autenticado -> logout
-          get().logout(); // Llama a logout para limpiar estado
-          // Podrías relanzar el error si necesitas manejarlo en otro lugar
+          get().logout(); // Si la petición falla (ej. 401), cerramos sesión
           throw error;
         }
       },
 
-      // --- LOGOUT (modificado para limpiar apiClient) ---
+      // --- 6. LOGOUT (Lógica de soporte) ---
       logout: () => {
         console.log('Logging out...');
-        // Limpiar estado
         set({
           user: null,
           accessToken: null,
           isAuthenticated: false,
         });
-        // Limpiar token de los headers por defecto de axios
         delete apiClient.defaults.headers.common['Authorization'];
-        // Opcional: Redirigir al login (mejor hacerlo en el componente o router)
-        // window.location.href = '/login';
       },
 
-      // --- SET ACCESS TOKEN (sin cambios, útil para interceptor) ---
+      // --- 7. SET ACCESS TOKEN (Lógica de soporte) ---
       setAccessToken: (token: string) => {
         set({ accessToken: token });
-        // También actualizamos el header por defecto si se llama externamente
         apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       },
     }),
     {
       name: 'auth-storage', // Nombre para localStorage
       storage: createJSONStorage(() => localStorage),
-      // Persistir solo el token (el usuario se obtiene con fetchUser)
-      // Si guardas el usuario aquí, podría quedar desactualizado.
-      // Si DECIDES persistir el usuario, asegúrate de actualizarlo.
+      // Persistimos solo el token. El usuario se obtendrá fresco al recargar.
       partialize: (state) => ({
         accessToken: state.accessToken,
-        // user: state.user, // Descomenta si quieres persistir el usuario también
-        // isAuthenticated: state.isAuthenticated // Podrías persistir esto
       }),
-      // --- REHYDRATION LOGIC (Opcional pero recomendado) ---
-      // Esta función se ejecuta cuando el estado se carga desde localStorage
-      onRehydrateStorage: (_state) => {
-        console.log('Rehydrating auth state...');
-        return (currentState, error) => {
-          if (error) {
-            console.error('Failed to rehydrate auth state:', error);
-            // Si hay error, limpiar el estado para evitar problemas
-            currentState?.logout();
-          } else if (currentState?.accessToken) {
-            console.log(
-              'Access token found in storage. Setting axios header and attempting to fetch user.',
-            );
-            // Si tenemos token, configuramos axios y tratamos de obtener datos frescos del usuario
-            apiClient.defaults.headers.common['Authorization'] =
-              `Bearer ${currentState.accessToken}`;
-            currentState.isAuthenticated = true; // Asumimos autenticado si hay token
-            // Intentar obtener datos frescos del usuario al cargar la app
-            // Usamos un setTimeout para evitar potenciales problemas de timing
-            setTimeout(() => {
-              currentState.fetchUser().catch((fetchError) => {
-                // fetchUser ya maneja el logout en caso de error, solo logueamos aquí
-                console.warn(
-                  'Failed to fetch user on rehydration:',
-                  fetchError,
-                );
-              });
-            }, 0);
-          } else {
-            console.log('No access token found in storage.');
-            // Asegurarse de que el estado esté limpio si no hay token
-            currentState?.logout();
-          }
-        };
+      // Lógica para rehidratar el estado al cargar la app
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error('Failed to rehydrate auth state:', error);
+          state?.logout();
+        } else if (state?.accessToken) {
+          console.log('Rehydrating auth state with token.');
+          apiClient.defaults.headers.common['Authorization'] =
+            `Bearer ${state.accessToken}`;
+          state.isAuthenticated = true; // Asumimos autenticado si hay token
+
+          // Intentar obtener datos frescos del usuario al cargar
+          setTimeout(() => {
+            state.fetchUser().catch((fetchError) => {
+              console.warn(
+                'Failed to fetch user on rehydration (token might be expired):',
+                fetchError.message,
+              );
+              // fetchUser() ya maneja el logout en caso de error
+            });
+          }, 1);
+        } else {
+          console.log('No auth token found in storage.');
+          state?.logout(); // Nos aseguramos que esté limpio si no hay token
+        }
       },
     },
   ),

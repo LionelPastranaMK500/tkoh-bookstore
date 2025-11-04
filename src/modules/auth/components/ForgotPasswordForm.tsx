@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
@@ -12,30 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/ui/card';
-
-// Esquema de validación
-const forgotPasswordSchema = z.object({
-  identificador: z
-    .string()
-    .min(1, 'El campo es requerido')
-    .refine(
-      (val) =>
-        z.string().email().safeParse(val).success ||
-        /^(\+51)?[9]\d{8}$/.test(val),
-      'Debe ser un email válido o un celular peruano (ej: 987654321 o +51987654321)',
-    ),
-});
-
-// Tipo inferido
-export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
-
-// Props
-interface ForgotPasswordFormProps {
-  onSubmit: (data: ForgotPasswordFormValues) => void;
-  isLoading: boolean;
-  error: string | null;
-  successMessage: string | null;
-}
+import type { ForgotPasswordFormValues } from '@/services/types/auth/ForgotPasswordSchema';
+import { forgotPasswordSchema } from '@/services/types/auth/ForgotPasswordSchema';
+import type { ForgotPasswordFormProps } from '@/services/types/auth/ForgotPasswordFormProps';
 
 export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
   onSubmit,
@@ -59,8 +37,8 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
       <CardHeader>
         <CardTitle className="text-2xl">Recuperar Contraseña</CardTitle>
         <CardDescription>
-          Ingresa tu email o celular asociado a tu cuenta. Te enviaremos un
-          código de recuperación por SMS.
+          Ingresa tu celular asociado a tu cuenta. Te enviaremos un código de
+          recuperación por SMS.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -76,10 +54,10 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
               </div>
             )}
             <div>
-              <Label htmlFor="identificador">Email o Celular (+51)</Label>
+              <Label htmlFor="identificador">Celular (+51)</Label>
               <Input
                 id="identificador"
-                placeholder="ejemplo@correo.com o +51987654321"
+                placeholder="Ej: 987654321"
                 {...register('identificador')}
                 aria-invalid={errors.identificador ? 'true' : 'false'}
                 disabled={isLoading}

@@ -1,40 +1,31 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  RegisterForm,
-  type RegisterFormValues,
-} from '@/modules/auth/components/RegisterForm';
-import apiClient from '@/services/api'; // Asegúrate que la ruta a tu 'apiClient' (axios) sea correcta
 import { toast } from 'react-toastify';
+import { RegisterForm } from '@/modules/auth/components/RegisterForm';
+import type { RegisterFormValues } from '@/services/types/auth/RegisterSchema';
+import { useAuthStore } from '@/services/auth/authStore';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const register = useAuthStore((state) => state.register);
   const handleRegisterSubmit = async (data: RegisterFormValues) => {
     setError(null);
     setIsLoading(true);
 
-    // Excluir confirmPassword del objeto a enviar
     const { confirmPassword, ...apiData } = data;
 
     try {
-      // Llamar al endpoint de registro de la API
-      // (Asumiendo que tu apiClient está configurado para manejar ApiResponse)
-      const response = await apiClient.post('/api/v1/auth/register', apiData);
+      const response = await register(apiData);
 
-      if (response.data.success) {
+      if (response.success) {
         toast.success(
-          response.data.message ||
-            '¡Registro exitoso! Ahora puedes iniciar sesión.',
+          response.message || '¡Registro exitoso! Ahora puedes iniciar sesión.',
         );
-        // Redirigir al login (que ahora es /?view=login)
-        navigate('/?view=login');
+        navigate('/login');
       } else {
-        setError(
-          response.data.message || 'Ocurrió un error durante el registro.',
-        );
+        setError(response.message || 'Ocurrió un error durante el registro.');
       }
     } catch (err: any) {
       console.error('Error en el registro:', err);
