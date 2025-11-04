@@ -7,8 +7,6 @@ import {
   type UsuarioCreateFormValues,
 } from '@/services/types/create/UsuarioCreateSchema';
 import { toast } from 'react-toastify';
-
-// Importar componentes de Shadcn/UI
 import { Button } from '@/shared/ui/button';
 import {
   Dialog,
@@ -57,19 +55,18 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
       email: '',
       celular: '',
       password: '',
-      role: 'USUARIO', // Rol por defecto
+      role: 'USUARIO',
     },
   });
 
-  // 3. Lógica de Submit
   const onSubmit = (values: UsuarioCreateFormValues) => {
     toast.info('Creando usuario...');
 
     mutate(values, {
       onSuccess: (data) => {
         toast.success(data.message || 'Usuario creado con éxito');
-        onUserCreated(); // Refresca la tabla
-        onOpenChange(false); // Cierra el modal
+        onUserCreated();
+        onOpenChange(false);
       },
       onError: (error: any) => {
         const apiError =
@@ -81,7 +78,6 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
     });
   };
 
-  // 4. Limpiar el formulario cuando se cierra el modal
   useEffect(() => {
     if (!open) {
       form.reset();

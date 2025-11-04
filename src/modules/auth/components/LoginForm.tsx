@@ -5,9 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
-import { Link } from 'react-router-dom'; // <-- 1. Importar Link
-
-// Importar los tipos
+import { Link } from 'react-router-dom';
 import type { LoginFormValues } from '@/services/types/auth/LoginSchema';
 import { loginSchema } from '@/services/types/auth/LoginSchema';
 import type { LoginFormProps } from '@/services/types/auth/LoginFormProps';
@@ -15,7 +13,6 @@ import type { LoginFormProps } from '@/services/types/auth/LoginFormProps';
 export const LoginForm: React.FC<LoginFormProps> = ({
   onSubmit,
   isLoading,
-  error, // Dejamos esto como lo tienes, ya que confirmaste que funciona
 }) => {
   const {
     register,
