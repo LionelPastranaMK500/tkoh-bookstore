@@ -9,7 +9,6 @@ import {
 } from '@tanstack/react-table';
 import { toast } from 'react-toastify';
 
-// Iconos
 import {
   ArrowUpDown,
   MoreHorizontal,
@@ -17,10 +16,10 @@ import {
   Eye,
   Edit,
   Trash,
-  KeyRound, // <-- Ícono para Cambiar Contraseña
+  KeyRound,
+  UsersRound,
 } from 'lucide-react';
 
-// Componentes de Shadcn/UI
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,23 +38,22 @@ import {
 } from '@/shared/ui/table';
 import { Button } from '@/shared/ui/button';
 
-// Hooks de API
 import { useUsers, useDeleteUser } from '@/services/admin/userApi';
 import type { UsuarioDto } from '@/services/types/simple/UsuarioDto';
 
-// Modales
 import { CreateUserDialog } from './CreateUserDialog';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
 import { UserDetailsDialog } from './UserDetailsDialog';
 import { EditUserDialog } from './EditUserDialog';
 import { ChangePasswordDialog } from './ChangePasswordDialog';
-
+import { AssignRolesDialog } from './AssignRolesDialog';
 // Estado para controlar qué modal está abierto
 type ModalState = {
   view: UsuarioDto | null;
   edit: UsuarioDto | null;
   delete: UsuarioDto | null;
-  password: UsuarioDto | null; // <-- Estado para el modal de contraseña
+  password: UsuarioDto | null;
+  assignRoles: UsuarioDto | null;
 };
 
 // --- Componente Principal de la Tabla ---
@@ -69,6 +67,7 @@ export function UserTable() {
     edit: null,
     delete: null,
     password: null,
+    assignRoles: null, // <-- INICIALIZAR ESTADO
   });
 
   // Hooks de React Query
@@ -90,14 +89,26 @@ export function UserTable() {
           `Usuario "${modal.delete?.nombreUsuario}" eliminado con éxito.`,
         );
         // Resetea TODOS los modales al cerrar
-        setModal({ view: null, edit: null, delete: null, password: null });
+        setModal({
+          view: null,
+          edit: null,
+          delete: null,
+          password: null,
+          assignRoles: null,
+        }); // <-- RESETEAR AQUÍ
         refetch(); // Refresca la tabla
       },
       onError: (err: any) => {
         const apiError =
           err.response?.data?.message || 'No se pudo eliminar el usuario.';
         toast.error(apiError);
-        setModal({ view: null, edit: null, delete: null, password: null });
+        setModal({
+          view: null,
+          edit: null,
+          delete: null,
+          password: null,
+          assignRoles: null,
+        }); // <-- RESETEAR AQUÍ
       },
     });
   };
@@ -202,6 +213,18 @@ export function UserTable() {
                   <KeyRound className="mr-2 h-4 w-4" />
                   Cambiar Contraseña
                 </DropdownMenuItem>
+
+                {/* --- NUEVO ITEM DE MENÚ --- */}
+                <DropdownMenuItem
+                  onClick={() =>
+                    setModal((prev) => ({ ...prev, assignRoles: user }))
+                  }
+                >
+                  <UsersRound className="mr-2 h-4 w-4" />
+                  Asignar Roles
+                </DropdownMenuItem>
+                {/* --- FIN DEL NUEVO ITEM --- */}
+
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-destructive"
@@ -374,6 +397,16 @@ export function UserTable() {
         open={!!modal.password}
         onOpenChange={() => setModal((prev) => ({ ...prev, password: null }))}
         user={modal.password}
+      />
+
+      {/* --- RENDERIZAR EL NUEVO DIÁLOGO --- */}
+      <AssignRolesDialog
+        open={!!modal.assignRoles}
+        onOpenChange={() =>
+          setModal((prev) => ({ ...prev, assignRoles: null }))
+        }
+        user={modal.assignRoles}
+        onRolesUpdated={() => refetch()}
       />
     </div>
   );
