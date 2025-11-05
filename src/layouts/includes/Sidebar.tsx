@@ -10,7 +10,6 @@ import {
   User,
 } from 'lucide-react';
 import { useAuthStore } from '@/services/auth/authStore';
-// 3. Importar el hook de permisos (lo crearemos en el futuro)
 // import { usePermission } from '@/shared/hooks/usePermission';
 
 export function Sidebar() {
