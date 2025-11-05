@@ -9,7 +9,7 @@ import type { UsuarioUpdateDto } from '../types/update/UsuarioUpdateDto';
 import type { User } from '../types/User';
 // --- NUEVO: Importar RoleDto ---
 import type { RoleDto } from '../types/role';
-import type { AdminPasswordChangeDto } from '../types/update/adminPasswordChangeSchema';
+import type { AdminPasswordChangeDto } from '../types/update/AdminPasswordChangeSchema';
 
 const USERS_QUERY_KEY = ['adminUsers'];
 // --- NUEVO: Query Key para Roles ---

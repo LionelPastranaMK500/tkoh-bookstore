@@ -7,7 +7,7 @@ import type { UsuarioDto } from '@/services/types/simple/UsuarioDto';
 import {
   adminPasswordChangeSchema,
   type AdminPasswordChangeFormValues,
-} from '@/services/types/update/adminPasswordChangeSchema';
+} from '@/services/types/update/AdminPasswordChangeSchema';
 
 // Importar componentes de Shadcn/UI
 import { Button } from '@/shared/ui/button';
