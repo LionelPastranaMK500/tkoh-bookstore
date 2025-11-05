@@ -5,27 +5,32 @@ import { Route, Routes } from 'react-router-dom';
 import { AuthLayout } from '../layouts/AuthLayout';
 import MainLayout from '../layouts/MainLayout';
 
-// Páginas Públicas (Auth)
-import HomePage from '@/modules/Home/pages/HomePage';
+// ... (imports de Auth)
 import { LoginPage } from '@/modules/auth/LoginPage';
 import { RegisterPage } from '@/modules/auth/RegisterPage';
 import { ForgotPasswordPage } from '@/modules/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from '@/modules/auth/ResetPasswordPage';
+import HomePage from '@/modules/Home/pages/HomePage';
 
-// --- 1. Importar las páginas del Dashboard (CORREGIDO) ---
-import { DashboardPage } from '@/modules/dashboard/pages/DashboardPage'; // NUEVO
-import { ProfilePage } from '@/modules/profile/ProfilePage'; // NUEVO
-import { AdminPage } from '@/modules/admin/pages/AdminPage'; // (placeholder existente)
-// (Ya no importamos 'UsuarioPage' para esto)
+// --- Páginas del Dashboard ---
+import { DashboardPage } from '@/modules/dashboard/pages/DashboardPage';
+import { ProfilePage } from '@/modules/profile/ProfilePage';
+import { AdminPage } from '@/modules/admin/pages/AdminPage';
+import { CategoriaPage } from '@/modules/categoria/pages/CategoriaPage';
+import { EditorialPage } from '@/modules/editorial/pages/EditorialPage';
+import { LibroPage } from '@/modules/libro/pages/LibroPage';
 
-// Páginas Comunes (Errores)
+// --- Importar Protected Route ---
+import { ProtectedRoute } from './ProtectedRoute';
+
+// ... (imports de Common)
 import { NotFoundPage } from '../modules/common/NotFoundPage';
 import { UnauthorizedPage } from '../modules/common/UnauthorizedPage';
 
 export const AppRouter = () => {
   return (
     <Routes>
-      {/* --- GRUPO 1: Rutas Públicas (Layout simple, sin Sidebar) --- */}
+      {/* --- GRUPO 1: Rutas Públicas --- */}
       <Route element={<AuthLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -34,23 +39,38 @@ export const AppRouter = () => {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Route>
 
-      {/* --- GRUPO 2: Rutas del Dashboard (Layout con Sidebar) --- */}
-      {/* (Como dijimos, públicas por ahora) */}
+      {/* --- GRUPO 2: Rutas Protegidas (Dashboard) --- */}
       <Route element={<MainLayout />}>
-        {/* --- 2. RUTAS CORREGIDAS --- */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/perfil" element={<ProfilePage />} />
+        {/* Rutas que solo requieren autenticación */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/perfil" element={<ProfilePage />} />
+          <Route path="/editoriales" element={<EditorialPage />} />
 
-        {/* Rutas de Gestión (Placeholders) */}
-        <Route path="/libros" element={<AdminPage />} />
-        <Route path="/categorias" element={<AdminPage />} />
-        <Route path="/editoriales" element={<AdminPage />} />
+          {/* --- 2. ACTUALIZAR ESTA RUTA --- */}
+          {/* API: @PreAuthorize("isAuthenticated()") */}
+          <Route path="/libros" element={<LibroPage />} />
+        </Route>
 
-        {/* Ruta de Administración */}
-        <Route path="/admin/users" element={<AdminPage />} />
+        {/* Rutas con permisos específicos (Admin/Owner) */}
+        <Route
+          element={<ProtectedRoute allowedRoles={['OWNER', 'USER_READ_ALL']} />}
+        >
+          <Route path="/admin/users" element={<AdminPage />} />
+        </Route>
+
+        <Route
+          element={
+            <ProtectedRoute
+              allowedRoles={['OWNMavicka', 'CATEGORY_READ_ALL']}
+            />
+          }
+        >
+          <Route path="/categorias" element={<CategoriaPage />} />
+        </Route>
       </Route>
 
-      {/* --- Rutas de Error (Layout limpio) --- */}
+      {/* --- Rutas de Error --- */}
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
