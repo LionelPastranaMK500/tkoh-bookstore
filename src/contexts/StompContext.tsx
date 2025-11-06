@@ -6,9 +6,12 @@ import React, {
   useState,
   useRef,
 } from 'react';
-import { Client } from '@stomp/stompjs';
+import { Client, type IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useAuthStore } from '@/services/auth/authStore';
+import { useNotificacionStore } from '@/shared/stores/notificacionStore';
+import type { NotificacionDto } from '@/services/types/simple/NotificacionDto';
+import { toast } from 'react-toastify';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
@@ -33,6 +36,7 @@ export const StompProvider: React.FC<{ children: React.ReactNode }> = ({
   const clientRef = useRef<Client | null>(null);
 
   const accessToken = useAuthStore((state) => state.accessToken);
+  const { addNotificacion } = useNotificacionStore.getState();
 
   useEffect(() => {
     if (accessToken) {
@@ -54,6 +58,30 @@ export const StompProvider: React.FC<{ children: React.ReactNode }> = ({
           onConnect: () => {
             console.log('[STOMP]: Conectado exitosamente.');
             setIsConnected(true);
+
+            stompClient.subscribe(
+              '/user/queue/notifications',
+              (message: IMessage) => {
+                try {
+                  const nuevaNotificacion = JSON.parse(
+                    message.body,
+                  ) as NotificacionDto;
+
+                  addNotificacion(nuevaNotificacion);
+
+                  // Mostrar un toast
+                  toast.info(
+                    `🔔 Nueva notificación: ${nuevaNotificacion.mensaje.substring(0, 30)}...`,
+                  );
+                } catch (e) {
+                  console.error(
+                    'Error al parsear notificación de WebSocket',
+                    e,
+                  );
+                }
+              },
+            );
+            // --- FIN DE LA SUSCRIPCIÓN ---
           },
           onDisconnect: () => {
             console.log('[STOMP]: Desconectado.');
@@ -71,22 +99,21 @@ export const StompProvider: React.FC<{ children: React.ReactNode }> = ({
         clientRef.current = stompClient;
       }
 
-      // Si el cliente no está activo, activarlo
       if (!clientRef.current.active) {
         console.log('[STOMP]: Activando cliente...');
         clientRef.current.activate();
       }
     } else {
-      // Si no hay token (logout), desactivar y limpiar
       if (clientRef.current && clientRef.current.active) {
         console.log('[STOMP]: Desactivando cliente por logout...');
         clientRef.current.deactivate();
         clientRef.current = null;
         setIsConnected(false);
+        // Limpiar notificaciones al hacer logout
+        useNotificacionStore.getState().clearNotificaciones();
       }
     }
 
-    // Cleanup: Desactivar al desmontar el provider
     return () => {
       if (clientRef.current && clientRef.current.active) {
         console.log('[STOMP]: Desactivando cliente (cleanup).');
@@ -94,7 +121,7 @@ export const StompProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsConnected(false);
       }
     };
-  }, [accessToken]); // Este efecto depende solo del token
+  }, [accessToken, addNotificacion]);
 
   const value = {
     stompClient: clientRef.current,

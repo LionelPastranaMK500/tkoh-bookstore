@@ -21,6 +21,8 @@ import { CategoriaPage } from '@/modules/categoria/pages/CategoriaPage';
 import { EditorialPage } from '@/modules/editorial/pages/EditorialPage';
 import { LibroPage } from '@/modules/libro/pages/LibroPage';
 import { ChatPage } from '@/modules/chat/pages/ChatPage';
+import { LogPage } from '@/modules/auditoria/pages/LogPage';
+import { TareaPage } from '@/modules/tarea/pages/TareaPage';
 
 // --- Importar Protected Route ---
 import { ProtectedRoute } from './ProtectedRoute';
@@ -62,10 +64,25 @@ export const AppRouter = () => {
         </Route>
 
         {/* Rutas con permisos específicos (Admin/Owner) */}
+
+        <Route
+          element={
+            <ProtectedRoute allowedRoles={['OWNER', 'ADMIN', 'VENDEDOR']} />
+          }
+        >
+          <Route path="/tareas" element={<TareaPage />} />
+        </Route>
+
         <Route
           element={<ProtectedRoute allowedRoles={['OWNER', 'USER_READ_ALL']} />}
         >
           <Route path="/admin/users" element={<AdminPage />} />
+        </Route>
+
+        <Route
+          element={<ProtectedRoute allowedRoles={['OWNER', 'LOG_READ']} />}
+        >
+          <Route path="/admin/logs" element={<LogPage />} />
         </Route>
 
         <Route

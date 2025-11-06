@@ -4,6 +4,7 @@ import { BookMarked, LayoutDashboard, Moon, Sun } from 'lucide-react';
 import { useAuthStore } from '@/services/auth/authStore';
 import { Navbar } from './Navbar';
 import { useThemeStore } from '@/shared/stores/themeStore';
+import { NotificationBell } from './NotificationBell'; // <-- 1. IMPORTAR
 
 export function Header() {
   const location = useLocation();
@@ -11,7 +12,7 @@ export function Header() {
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  const { theme, toggleTheme } = useThemeStore();
+  const { toggleTheme } = useThemeStore();
 
   return (
     <header className="top-0 z-50 sticky bg-background/95 backdrop-blur border-border/40 border-b w-full">
@@ -22,13 +23,9 @@ export function Header() {
           <span className="sm:inline-block font-bold">TKOH Bookstore</span>
         </Link>
 
-        {/* --- 2. USAMOS EL NAVBAR --- */}
-        {/* Solo mostrar el Navbar si estamos en la HomePage */}
         {currentPath === '/' ? <Navbar /> : <div className="flex-1" />}
 
-        {/* Botones de Autenticación (Derecha) */}
         <div className="flex items-center space-x-2">
-          {/* 4. Añadir el botón para cambiar tema */}
           <Button variant="outline" size="icon" onClick={toggleTheme}>
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -36,12 +33,17 @@ export function Header() {
           </Button>
 
           {isAuthenticated ? (
-            <Button asChild>
-              <Link to="/perfil">
-                <LayoutDashboard className="mr-2 w-4 h-4" />
-                Ir al Panel
-              </Link>
-            </Button>
+            <>
+              {/* --- 2. AÑADIR LA CAMPANA DE NOTIFICACIÓN --- */}
+              <NotificationBell />
+
+              <Button asChild>
+                <Link to="/perfil">
+                  <LayoutDashboard className="mr-2 w-4 h-4" />
+                  Ir al Panel
+                </Link>
+              </Button>
+            </>
           ) : (
             <>
               {currentPath !== '/login' && (
