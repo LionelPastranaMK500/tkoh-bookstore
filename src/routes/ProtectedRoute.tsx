@@ -1,4 +1,4 @@
-// src/providers/ProtectedRoute.tsx
+// src/routes/ProtectedRoute.tsx
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/services/auth/authStore';
 import type { RoleDto } from '@/services/types/role'; // Importar RoleDto

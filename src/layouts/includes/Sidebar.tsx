@@ -1,6 +1,5 @@
 // src/layouts/includes/Sidebar.tsx
 import { NavLink } from 'react-router-dom';
-// 1. Importar los iconos de Lucide (equivalentes a los pi-icons)
 import {
   LayoutDashboard,
   BookOpen,
@@ -8,25 +7,21 @@ import {
   Briefcase,
   Users,
   User,
+  MessageSquare, // <-- 1. IMPORTAR ÍCONO DE CHAT
 } from 'lucide-react';
 import { useAuthStore } from '@/services/auth/authStore';
-// import { usePermission } from '@/shared/hooks/usePermission';
+// ...
 
 export function Sidebar() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  // TODO: Obtener 'user' cuando la API esté conectada
-  // const user = useAuthStore((state) => state.user);
-
+  // ...
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:text-primary ${
-      isActive ? 'text-primary bg-muted' : '' // Estilo activo mejorado
+      isActive ? 'text-primary bg-muted' : ''
     }`;
 
-  // 6. Como la API no está activa, mostramos todo.
-  //    En el futuro, usaremos el hook 'usePermission' aquí.
+  // ... (lógica de canShow)
   const canShow = (roles: string[]) => {
-    // TODO: Implementar lógica de permisos aquí.
-    // Por ahora, como dijiste, mostramos todo si está (teóricamente) logueado.
     console.log('Roles requeridos:', roles);
     return isAuthenticated; // O simplemente 'true' por ahora
   };
@@ -36,7 +31,6 @@ export function Sidebar() {
       <div className="h-full py-6 pl-8 pr-6 lg:py-8">
         <nav className="flex flex-col gap-1">
           {/* --- Grupo 1: Gestión (del JSF) --- */}
-          {/* Visible para ADMIN, OWNER, VENDEDOR, USUARIO */}
           <span className="mb-2 text-xs font-semibold uppercase text-muted-foreground/80">
             Gestión
           </span>
@@ -57,13 +51,20 @@ export function Sidebar() {
             Editoriales
           </NavLink>
 
+          {/* --- 2. AÑADIR ENLACE AL CHAT --- */}
+          {isAuthenticated && (
+            <NavLink to="/chat" className={navLinkClass}>
+              <MessageSquare className="h-4 w-4" />
+              Mensajería
+            </NavLink>
+          )}
+
           {/* --- Grupo 2: Administración (Tu lógica) --- */}
           <span className="mt-4 mb-2 text-xs font-semibold uppercase text-muted-foreground/80">
             Administración
           </span>
 
-          {/* Este enlace solo debe ser visible para ADMIN y OWNER */}
-          {/* TODO: En el futuro, reemplazar 'canShow' por el hook de permisos */}
+          {/* ... (resto de enlaces: Gestionar Usuarios, Mi Perfil) ... */}
           {canShow(['ADMIN', 'OWNER']) && (
             <NavLink to="/admin/users" className={navLinkClass}>
               <Users className="h-4 w-4" />
@@ -71,7 +72,6 @@ export function Sidebar() {
             </NavLink>
           )}
 
-          {/* Este enlace es visible para todos los logueados */}
           <NavLink to="/perfil" className={navLinkClass}>
             <User className="h-4 w-4" />
             Mi Perfil

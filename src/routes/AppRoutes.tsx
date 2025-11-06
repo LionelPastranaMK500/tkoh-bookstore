@@ -1,11 +1,12 @@
 // src/routes/AppRoutes.tsx
 import { Route, Routes } from 'react-router-dom';
+import { StompProvider } from '@/contexts/StompContext';
 
 // Layouts
 import { AuthLayout } from '../layouts/AuthLayout';
 import MainLayout from '../layouts/MainLayout';
 
-// ... (imports de Auth)
+// Páginas Públicas (Auth)
 import { LoginPage } from '@/modules/auth/LoginPage';
 import { RegisterPage } from '@/modules/auth/RegisterPage';
 import { ForgotPasswordPage } from '@/modules/auth/ForgotPasswordPage';
@@ -19,11 +20,12 @@ import { AdminPage } from '@/modules/admin/pages/AdminPage';
 import { CategoriaPage } from '@/modules/categoria/pages/CategoriaPage';
 import { EditorialPage } from '@/modules/editorial/pages/EditorialPage';
 import { LibroPage } from '@/modules/libro/pages/LibroPage';
+import { ChatPage } from '@/modules/chat/pages/ChatPage';
 
 // --- Importar Protected Route ---
 import { ProtectedRoute } from './ProtectedRoute';
 
-// ... (imports de Common)
+// Páginas Comunes (Errores)
 import { NotFoundPage } from '../modules/common/NotFoundPage';
 import { UnauthorizedPage } from '../modules/common/UnauthorizedPage';
 
@@ -46,10 +48,17 @@ export const AppRouter = () => {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/perfil" element={<ProfilePage />} />
           <Route path="/editoriales" element={<EditorialPage />} />
-
-          {/* --- 2. ACTUALIZAR ESTA RUTA --- */}
-          {/* API: @PreAuthorize("isAuthenticated()") */}
           <Route path="/libros" element={<LibroPage />} />
+
+          {/* Ruta de Chat (requiere StompProvider) */}
+          <Route
+            path="/chat"
+            element={
+              <StompProvider>
+                <ChatPage />
+              </StompProvider>
+            }
+          />
         </Route>
 
         {/* Rutas con permisos específicos (Admin/Owner) */}
@@ -61,9 +70,7 @@ export const AppRouter = () => {
 
         <Route
           element={
-            <ProtectedRoute
-              allowedRoles={['OWNMavicka', 'CATEGORY_READ_ALL']}
-            />
+            <ProtectedRoute allowedRoles={['OWNER', 'CATEGORY_READ_ALL']} />
           }
         >
           <Route path="/categorias" element={<CategoriaPage />} />
