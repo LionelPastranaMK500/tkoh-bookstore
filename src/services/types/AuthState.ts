@@ -4,7 +4,6 @@ import type { ApiResponse } from '@/services/types/ApiResponse';
 
 // Importar los nuevos tipos que creamos
 import type { LoginCredentials } from './auth/LoginCredentials';
-import type { LoginResponse } from './auth/LoginResponse';
 import type { RegisterCredentials } from './auth/RegisterCredentials';
 import type { RegisterResponse } from './auth/RegisterResponse';
 import type { ForgotPasswordCredentials } from './auth/ForgotPasswordCredentials';

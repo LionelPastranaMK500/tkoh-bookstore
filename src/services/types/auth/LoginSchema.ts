@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 // Esquema de validación Zod
 export const loginSchema = z.object({
-  email: z.email('Correo electrónico inválido'),
+  email: z.string().email('Correo electrónico inválido'),
   password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
 });
 

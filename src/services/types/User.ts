@@ -1,5 +1,5 @@
 // scr/features/auth/interface/User.ts
-import type { RoleDto } from '@/services/types/role';
+import { type RoleDto } from '@/services/types/simple/RoleDto';
 /**
  * Define la estructura del Usuario (UsuarioDetailDto).
  */
