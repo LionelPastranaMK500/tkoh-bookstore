@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const resetPasswordSchema = z
   .object({
-    email: z.email('Debe ser un email válido'),
+    email: z.string().email('Debe ser un email válido'),
     otp: z
       .string()
       .length(6, 'El código OTP debe tener 6 dígitos')

@@ -34,7 +34,6 @@ import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 
 // Hooks de API y Tipos
-// --- SE ELIMINÓ 'FetchLibrosParams' DE ESTA LÍNEA ---
 import { useLibros } from '@/services/libro/libroApi';
 import type { LibroDto } from '@/services/types/simple/LibroDto';
 
@@ -42,19 +41,23 @@ import type { LibroDto } from '@/services/types/simple/LibroDto';
 import { CreateLibroDialog } from './CreateLibroDialog';
 import { EditLibroDialog } from './EditLibroDialog';
 import { DeleteLibroDialog } from './DeleteLibroDialog';
+// 1. Importa el nuevo diálogo de detalles
+import { LibroDetailsDialog } from './LibroDetailsDialog';
 
 type ModalState = {
   create: boolean;
   edit: LibroDto | null;
   delete: LibroDto | null;
+  view: string | null; // 2. Añade 'view' para guardar el ISBN
 };
 
 export function LibroTable() {
-  // Estado para los modales
+  // 3. Actualiza el estado inicial del modal
   const [modal, setModal] = useState<ModalState>({
     create: false,
     edit: null,
     delete: null,
+    view: null, // Inicializa 'view'
   });
 
   // Estado para la paginación y filtros
@@ -130,10 +133,12 @@ export function LibroTable() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+
+                {/* 4. Implementa el onClick del botón de detalles */}
                 <DropdownMenuItem
-                  onClick={() => {
-                    /* TODO: Implementar modal de detalles si se desea */
-                  }}
+                  onClick={() =>
+                    setModal((prev) => ({ ...prev, view: libro.isbn }))
+                  }
                 >
                   <Eye className="mr-2 h-4 w-4" />
                   Ver Detalles
@@ -319,6 +324,17 @@ export function LibroTable() {
           </Button>
         </div>
       </div>
+
+      {/* --- MODALES --- */}
+
+      {/* 5. Renderiza el nuevo modal de detalles */}
+      <LibroDetailsDialog
+        open={!!modal.view}
+        onOpenChange={(open) =>
+          setModal((prev) => ({ ...prev, view: open ? prev.view : null }))
+        }
+        isbn={modal.view}
+      />
 
       {/* --- MODALES CONDICIONALES --- */}
       {canManage && (

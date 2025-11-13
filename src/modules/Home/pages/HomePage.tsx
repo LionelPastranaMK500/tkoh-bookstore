@@ -15,15 +15,12 @@ import {
 export default function HomePage() {
   return (
     <>
-      {/* --- CORRECCIÓN: Sección Hero --- */}
       <section className="container relative py-20 md:py-32 lg:py-40">
-        {/* 'max-w-[64rem]' FUE ELIMINADO de este div para que use el ancho del 'container' */}
         <div className="mx-auto flex flex-col items-center justify-center text-center">
           <BookOpenCheck className="h-16 w-16 text-primary mb-6" />
           <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-6xl lg:leading-[1.1]">
             Bienvenido a TKOH Bookstore
           </h1>
-          {/* 'max-w-[42rem]' también lo quitamos para consistencia, o lo ajustamos */}
           <p className="mt-4 text-lg text-muted-foreground sm:text-xl">
             Tu solución integral y moderna para la gestión avanzada de
             librerías. Controla tu inventario, ventas y equipo, todo desde un

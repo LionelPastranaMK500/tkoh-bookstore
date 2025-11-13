@@ -9,13 +9,16 @@ import React, {
 import { Client, type IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useAuthStore } from '@/services/auth/authStore';
+// 1. Importa el hook, no solo el `getState`
 import { useNotificacionStore } from '@/shared/stores/notificacionStore';
 import type { NotificacionDto } from '@/services/types/simple/NotificacionDto';
 import { toast } from 'react-toastify';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
-const SOCKET_URL = `${API_URL}/ws`;
+const cleanApiUrl = API_URL.replace(/\/$/, '');
+
+const SOCKET_URL = `${cleanApiUrl}/ws`;
 
 interface StompContextType {
   stompClient: Client | null;
@@ -36,7 +39,17 @@ export const StompProvider: React.FC<{ children: React.ReactNode }> = ({
   const clientRef = useRef<Client | null>(null);
 
   const accessToken = useAuthStore((state) => state.accessToken);
-  const { addNotificacion } = useNotificacionStore.getState();
+
+  // --- ESTA ES LA CORRECCIÓN ---
+  // 2. Selecciona las acciones usando el hook.
+  // Zustand garantiza que estas referencias de función son estables.
+  const addNotificacion = useNotificacionStore(
+    (state) => state.addNotificacion,
+  );
+  const clearNotificaciones = useNotificacionStore(
+    (state) => state.clearNotificaciones,
+  );
+  // --- FIN DE LA CORRECCIÓN ---
 
   useEffect(() => {
     if (accessToken) {
@@ -67,6 +80,7 @@ export const StompProvider: React.FC<{ children: React.ReactNode }> = ({
                     message.body,
                   ) as NotificacionDto;
 
+                  // 3. Usa la función estable del hook
                   addNotificacion(nuevaNotificacion);
 
                   // Mostrar un toast
@@ -109,8 +123,8 @@ export const StompProvider: React.FC<{ children: React.ReactNode }> = ({
         clientRef.current.deactivate();
         clientRef.current = null;
         setIsConnected(false);
-        // Limpiar notificaciones al hacer logout
-        useNotificacionStore.getState().clearNotificaciones();
+        // 4. Usa la función estable del hook
+        clearNotificaciones();
       }
     }
 
@@ -121,7 +135,9 @@ export const StompProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsConnected(false);
       }
     };
-  }, [accessToken, addNotificacion]);
+    // 5. Añade las funciones al array de dependencias
+    // (es seguro porque son estables)
+  }, [accessToken, addNotificacion, clearNotificaciones]);
 
   const value = {
     stompClient: clientRef.current,
